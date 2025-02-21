@@ -18,8 +18,16 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 selectable: true,
+                locale: 'es',
+                buttonText: {
+                    today: 'hoy',
+                    month: 'mes',
+                    week: 'semana',
+                    day: 'dia',
+                },
                 headerToolbar: {
-                    left: 'prev,next',
+
+                    left: 'prev,next,today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay' // user can switch between the two
                 },
