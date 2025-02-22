@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "034c2860b8985f0d293bcf35657601a5",
+    "content-hash": "1f876eb48efe124d48543a33e2550eb6",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1157,6 +1157,58 @@
                 }
             ],
             "time": "2025-02-03T10:55:03+00:00"
+        },
+        {
+            "name": "jenssegers/date",
+            "version": "v2.0.20",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jenssegers/date.git",
+                "reference": "422c6682fe68de59398ef89cca45d920afe12436"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jenssegers/date/zipball/422c6682fe68de59398ef89cca45d920afe12436",
+                "reference": "422c6682fe68de59398ef89cca45d920afe12436",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "*",
+                "php": ">=5.3.0",
+                "symfony/translation": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*",
+                "satooshi/php-coveralls": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Jenssegers\\Date": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jens Segers",
+                    "homepage": "http://jenssegers.be"
+                }
+            ],
+            "description": "A date library to help you work with dates",
+            "keywords": [
+                "date",
+                "datetime",
+                "laravel",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/jenssegers/date/issues",
+                "source": "https://github.com/jenssegers/date/tree/v2.0.20"
+            },
+            "time": "2015-03-14T13:21:54+00:00"
         },
         {
             "name": "laravel/fortify",

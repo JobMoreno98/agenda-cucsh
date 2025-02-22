@@ -7,11 +7,8 @@
                 <td>
                     <form method="POST" action="{{ route('eventos.delete', $item->id) }}" id="formularioEliminar">
                         @csrf
-
                         @method('delete')
-
                         <button type="submit" class="btn btn-sm btn-outline-danger" >Eliminar</button>
-
                     </form>
                 </td>
             @endif

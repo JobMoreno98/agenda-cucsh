@@ -23,3 +23,4 @@ Route::resource('areas', AreaController::class)->except(['create']);
 
 Route::get('eventos-dia/{dia}', [EventosController::class, 'eventosDia'])->name('eventos.dia');
 Route::delete('/elimiar-evento/{id}', [EventosController::class, 'destroy'])->name('eventos.delete')->middleware('auth');
+Route::put('/actualizar-evento/{id}', [EventosController::class, 'update'])->name('evento.update')->middleware('auth');

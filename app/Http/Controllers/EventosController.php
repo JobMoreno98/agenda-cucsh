@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
+use Throwable;
 
 class EventosController extends Controller
 {
@@ -61,7 +62,7 @@ class EventosController extends Controller
         }
     }
 
-    public function show($id)
+    public function edit($id)
     {
         $evento = Eventos::with('area')->where('id', $id)->first();
         if (!isset($evento)) {
@@ -75,7 +76,22 @@ class EventosController extends Controller
         return response($evento, 200)->header('Content-Type', 'text/html');
     }
 
-    public function destroy($id){
+    public function show($id)
+    {
+        $evento = Eventos::with('area')->where('id', $id)->first();
+        if (!isset($evento)) {
+            return response()->json([
+                'success' => false,
+                'message' => "No existe ese evento",
+            ]);
+        }
+        
+        $evento = view('eventos.show', compact('evento'));
+        return response($evento, 200)->header('Content-Type', 'text/html');
+    }
+
+    public function destroy($id)
+    {
         $evento = Eventos::with('area')->where('id', $id)->first();
         if (!isset($evento)) {
             return response()->json([
@@ -84,7 +100,42 @@ class EventosController extends Controller
             ]);
         }
         $evento->delete();
-        toast('Se elimino el evento','success');
+        toast('Se elimino el evento', 'success');
         return redirect()->route('home');
+    }
+    public function update(Request $request, $id)
+    {
+
+        try {
+            $evento = Eventos::where('id', $id)->first();
+            if (!isset($evento)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "No existe ese evento",
+                ]);
+            }
+            $evento->nombre = $request->titulo;
+            $evento->descripcion = $request->descripcion;
+            $evento->areas_id  = $request->area;
+            $evento->user_id  = Auth::user()->id;
+            $evento->fecha_inicio = $request->fecha_inicio;
+            $evento->hora_inicio = $request->hora_inicio;
+            $evento->fecha_fin =  $request->fecha_fin[0];
+            $evento->hora_fin = $request->fecha_fin[1];
+            $evento->notas_cta  = $request->notas_cta;
+            $evento->notas_generales  =  $request->notas_generales;
+            $evento->update();
+        } catch (Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e,
+            ]);
+        }
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Se registro con exito'
+        ], 200);
     }
 }
