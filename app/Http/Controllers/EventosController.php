@@ -105,7 +105,7 @@ class EventosController extends Controller
 
     public function show($id)
     {
-        $evento = Eventos::with('area')->where('id', $id)->first();
+        $evento = Eventos::with('area', 'organiza')->where('id', $id)->first();
         if (!isset($evento)) {
             return response()->json([
                 'success' => false,
@@ -119,7 +119,7 @@ class EventosController extends Controller
 
     public function destroy($id)
     {
-        $evento = Eventos::with('area')->where('id', $id)->first();
+        $evento = Eventos::where('id', $id)->first();
         if (!isset($evento)) {
             return response()->json([
                 'success' => false,

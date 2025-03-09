@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang='es'>
-
 <head>
     <meta charset='utf-8' />
     <script src="{{ asset('js/fullcalendar.js') }}"></script>
@@ -273,7 +272,6 @@
                     }
                     const html = await response.text();
                     document.getElementById('organziadores').innerHTML = html;
-                    console.log(html)
                 } catch (error) {
                     console.error(error.message);
                 }

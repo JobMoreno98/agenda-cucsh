@@ -16,19 +16,21 @@
             <p class="d-flex m-0 align-items-center">
                 <span class="material-symbols-outlined">
                     location_on
-                </span> <span>Lugar</span>:  {{$evento->area->sedeReal}} - {{$evento->area->edificio }} - {{ $evento->area->nombre }} 
+                </span> <span>Lugar</span>: {{ $evento->area->sedeReal }} - Edificio {{ $evento->area->edificio }} -
+                {{ $evento->area->nombre }}
 
             </p>
             <p class="d-flex m-0 align-items-center">
                 <span class="material-symbols-outlined">
                     schedule
                 </span>
-                <span>Inicio</span>: {{ $evento->hora_inicio }}
+                <span>Inicio</span>: {{ $evento->hora_inicio }} / &nbsp; <span>Termina</span>:
+                {{ $evento->fecha_fin . ' ' . $evento->hora_fin }}
             </p>
-
+            <p>
+                Organiza: {{ $evento->organiza->nombre }} / Contacto {{ $evento->organiza->contacto }}
+            </p>
         </div>
-
-
     </div>
     <hr>
     <div class="d-flex flex-column justify-content-start fs-5">
@@ -40,7 +42,7 @@
         </p>
 
         <p class="m-0">
-            <span>Termina</span>: {{ $evento->fecha_fin . ' ' . $evento->hora_fin }}
+
         </p>
     </div>
     @if (Auth::check())

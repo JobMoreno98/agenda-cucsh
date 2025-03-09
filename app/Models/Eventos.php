@@ -15,4 +15,8 @@ class Eventos extends Model
     {
         return $this->belongsTo(Area::class, 'areas_id','id');
     }
+    public function organiza(): BelongsTo
+    {
+        return $this->belongsTo(Organizador::class, 'organizador_id','id');
+    }
 }

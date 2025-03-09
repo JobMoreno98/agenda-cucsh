@@ -59,7 +59,7 @@
                             <input type="color" class="form-control form-control-color" id="color" name="color"
                                 value="#563d7c" title="Choose your color">
                         </div>
-                        <div><button type="submit">Enviar</button></div>
+                        <div class="text-end"><button type="submit" class="btn btn-sm btn-success">Guardar</button></div>
                     </form>
                 </div>
             </div>
@@ -67,6 +67,14 @@
     </div>
 @endsection
 @section('js')
+    @if (session('success'))
+        <script>
+            Toast.fire({
+                title: "{{ session('message') }}",
+                icon: "success"
+            });
+        </script>
+    @endif
     <script>
         function crearArea() {
             if (document.getElementById('actualizar')) {

@@ -30,8 +30,10 @@ class AreaController extends Controller
             'edificio' => $request->edificio,
             'color' => $request->color
         ]);
-
-        return redirect()->route('areas.index');
+        return redirect()->route('areas.index')->with([
+            'success' => true,
+            'message' => 'Se registro de forma exitosa el área'
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -41,7 +43,6 @@ class AreaController extends Controller
             return response()->json([
                 'error' => 'Not Found',
                 'message' => 'No se encontro el área que ingresaste'
-
             ], 403);
         }
 
@@ -51,6 +52,9 @@ class AreaController extends Controller
             'edificio' => $request->edificio,
             'color' => $request->color
         ]);
-        return redirect()->route('areas.index');
+        return redirect()->route('areas.index')->with([
+            'success' => true,
+            'message' => 'Se actualizo de forma exitosa el área'
+        ]);
     }
 }
