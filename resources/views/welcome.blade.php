@@ -24,9 +24,9 @@
                 locale: 'es',
                 buttonText: {
                     today: 'hoy',
-                    month: 'mes',
-                    week: 'semana',
-                    day: 'dia',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
                 },
                 headerToolbar: {
 
@@ -34,21 +34,26 @@
                     center: 'title',
                     right: 'dayGridMonth,listWeek,listDay' // user can switch between the two
                 },
-
+                eventTimeFormat: { // like '14:30:00'
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    meridiem: false
+                },
                 dateClick: function(info) {
                     //alert('Clicked on: ' + info.dateStr);
-                    @if (Auth::check())
-                        document.getElementById('fecha_fin').min = info.dateStr;
-                    @endif
                     $('#modalEvento').modal('show');
                     eventosDia(info.dateStr);
-                    areas();
+                    @if (Auth::check())
+                        document.getElementById('fecha_fin').min = info.dateStr;
+                        areas();
+                        organizadores();
+                    @endif
                 },
                 eventClick: function(info) {
                     @if (Auth::check())
                         editarEvento(info.event.extendedProps);
                     @else
-                        verEvento(info.event.extendedProps);
+                        verEvento(info.event.extendedProps, info.event);
                     @endif
 
                 }
@@ -61,8 +66,10 @@
                     title: element['nombre'],
                     start: element['fecha_inicio'] + "T" + element['hora_inicio'],
                     end: element['fecha_fin'] + "T" + element['hora_inicio'],
+                    backgroundColor: element['color'],
                     extendedProps: {
                         id: element['id'],
+                        nombre: element['nombre']
                     }
                 })
             });
@@ -72,6 +79,8 @@
 </head>
 
 <body>
+    @include('layouts.navbar')
+
     <div>
         <div id='calendar' class="p-3" style="max-height: 90vh"></div>
     </div>
@@ -92,10 +101,8 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     @if (Auth::check())
                         <button class="btn btn-primary" data-bs-target="#exampleModalToggle2"
-                            data-bs-toggle="modal">Crear
-                            evento</button>
+                            data-bs-toggle="modal">Crear evento</button>
                     @endif
-
                 </div>
             </div>
         </div>
@@ -110,7 +117,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="modalBody">
-                        <form method="post" id="createEvent">
+                        <form method="post" action="{{ route('eventos.store', '2025-02-24') }}" id="createEvent">
                             @csrf
                             <div>
                                 <label for="">Título</label>
@@ -140,6 +147,9 @@
                             </div>
                             <div id="areas">
                             </div>
+                            <div id="organziadores">
+
+                            </div>
                             <div>
                                 <label for="">Notas CTA</label>
                                 <textarea name="notas_cta" id="notas_cta" class="form-control"></textarea>
@@ -148,6 +158,7 @@
                                 <label for="">Notas Servicio Generales</label>
                                 <textarea name="notas_generales" id="notas_generales" class="form-control"></textarea>
                             </div>
+                            <button type="submit"></button>
                             <div class="text-end">
                                 <span class="btn btn-success mt-1 btn-sm " onclick="guardarEvento()">
                                     Guardar
@@ -184,11 +195,13 @@
             showCloseButton: true
         });
 
-        var diaSeleccionado = Date.now();
+        var diaSeleccionado = '';
+
         async function eventosDia(date) {
             diaSeleccionado = date;
             let url = "{{ route('eventos.dia', ':id') }}";
             url = url.replace(':id', date);
+            console.log(url);
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
@@ -207,7 +220,7 @@
         <script>
             let eventoID = 0;
             async function areas() {
-                let url = "{{ route('areas.index') }}";
+                let url = "{{ route('areas.listado') }}";
                 try {
                     const response = await fetch(url);
                     if (!response.ok) {
@@ -215,6 +228,20 @@
                     }
                     const html = await response.text();
                     document.getElementById('areas').innerHTML = html;
+                } catch (error) {
+                    console.error(error.message);
+                }
+            }
+            async function organizadores() {
+                let url = "{{ route('organizadores.listado') }}";
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error("Reponse status: ${response.status}");
+                    }
+                    const html = await response.text();
+                    document.getElementById('organziadores').innerHTML = html;
+                    console.log(html)
                 } catch (error) {
                     console.error(error.message);
                 }
@@ -246,7 +273,6 @@
                 }).done(function(data) {
                     if (data.success === true) {
                         Toast.fire({
-                            type: 'success',
                             title: data.message,
                             icon: "success"
                         });
@@ -254,8 +280,8 @@
                             window.location.reload();
                         }, 2000);
                     } else {
+                        console.log(data)
                         Toast.fire({
-                            type: 'error',
                             title: data.message,
                             icon: "error"
                         });
@@ -266,13 +292,18 @@
             function actualizarEvento() {
                 let url = "{{ route('evento.update', ':id') }}";
                 url = url.replace(':id', eventoID.id);
-                console.log(url)
                 $.ajax({
                     url: url,
                     method: 'PUT',
                     data: $('#editarEvento').serialize(),
+                    error: function(data) {
+                        let datos = JSON.parse(data.responseText);
+                        Toast.fire({
+                            title: datos.message,
+                            icon: "error"
+                        });
+                    }
                 }).done(function(data) {
-                    console.log(data)
                     if (data.success === true) {
                         Toast.fire({
                             title: data.message,
@@ -281,18 +312,13 @@
                         setTimeout(() => {
                             window.location.reload();
                         }, 2000);
-                    } else {
-                        Toast.fire({
-                            title: data.message,
-                            icon: "error"
-                        });
                     }
-                });
+                })
             }
         </script>
     @else
         <script>
-            async function verEvento(id) {
+            async function verEvento(id, date) {
                 let url = "{{ route('eventos.show', ':id') }}";
                 url = url.replace(':id', id.id);
                 try {
@@ -301,7 +327,7 @@
                         throw new Error(`Response status: ${response.status}`);
                     }
                     const evento = await response.text();
-                    document.getElementById('tituloModal').innerHTML = diaSeleccionado;
+                    document.getElementById('tituloModal').innerHTML = id.nombre;
                     document.getElementById('contenido').innerHTML = evento;
                     $('#modalEvento').modal('show');
                 } catch (error) {

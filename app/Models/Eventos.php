@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Eventos extends Model
 {
     use SoftDeletes;
+    
     public function area(): BelongsTo
     {
-        return $this->belongsTo(Area::class,'areas_id');
+        return $this->belongsTo(Area::class, 'areas_id','id');
     }
 }

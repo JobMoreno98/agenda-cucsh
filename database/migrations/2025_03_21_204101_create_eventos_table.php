@@ -22,13 +22,17 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
+            $table->unsignedBigInteger('organizador_id');
+            $table->foreign('organizador_id')->references('id')->on('organizadors');
+
             $table->date('fecha_inicio');
-            $table->date('hora_inicio');
+            $table->time('hora_inicio');
             $table->date('fecha_fin');
-            $table->date('hora_fin');
+            $table->time('hora_fin');
             
             $table->string('notas_cta')->nullable();
             $table->string('notas_generales')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

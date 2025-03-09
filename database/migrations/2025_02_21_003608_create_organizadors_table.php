@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('organizadors', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre');
+            $table->unsignedBigInteger('areas_id');
+            $table->foreign('areas_id')->references('id')->on('areas');
+            $table->string('contacto');
             $table->timestamps();
         });
     }

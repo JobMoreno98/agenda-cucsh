@@ -1,4 +1,4 @@
-<form method="post" id="editarEvento">
+<form method="post" action="{{ route('evento.update', $evento->id) }}" id="editarEvento">
     @method('PUT')
     @csrf
     <div>
@@ -38,12 +38,22 @@
     <div id="areas">
         <label for="">Áreas</label>
         <select class="form-control" name="area" id="">
-            <option selected value="{{ $evento->areas_id }}">{{ $evento->area->nombre }}</option>
             @forelse ($areas as $item)
-                <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                <option value="{{ $item->id }}" {{ $evento->areas_id == $item->id ? 'selected' : '' }}> {{ $item->nombre }}</option>
             @empty
                 <option selected disabled>No hay áreas</option>
             @endforelse
+        </select>
+    </div>
+    <div>
+        <label for="">Organizador</label>
+        <select name="organizador_id" class="form-control" id="organizador_id">
+            @forelse ($organizadores as $item)
+            <option value="{{ $item->id }}" {{ $evento->organizador_id == $item->id ? 'selected' : '' }}> {{ $item->nombre }}</option>
+            @empty
+                <option selected disabled>No hay organizadores registrados</option>
+            @endforelse
+
         </select>
     </div>
     <div>
@@ -54,6 +64,7 @@
         <label for="">Notas Servicio Generales</label>
         <textarea name="notas_generales" id="notas_generales" class="form-control">{{ $evento->notas_generales }}</textarea>
     </div>
+    <input type="submit" value="enviar">
     <div class="text-end">
         <span class="btn btn-success mt-1 btn-sm " onclick="actualizarEvento()">
             Guardar

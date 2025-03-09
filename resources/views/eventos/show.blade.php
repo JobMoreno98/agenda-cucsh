@@ -5,7 +5,8 @@
 @endphp
 <div>
     <div class="d-flex align-items-center">
-        <div class="text-uppercase  me-3 text-white rounded p-1" style="background:orange;width:100px;height:100px;border:orange 2px solid;">
+        <div class="text-uppercase  me-3 text-white rounded p-1"
+            style="background:{{ $evento->area->color }};width:100px;height:100px;border:{{ $evento->area->color }} 2px solid;">
             <span class="d-block m-auto text-center " style="font-size: 22pt">
                 {{ $fecha }}
             </span>

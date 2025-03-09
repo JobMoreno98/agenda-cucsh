@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
+            $table->string('sede');
             $table->string('nombre');
+            $table->string('edificio');
+            $table->string('color');
             $table->timestamps();
         });
     }
