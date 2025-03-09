@@ -18,20 +18,20 @@
         </div>
         <div>
             <label for="">Hora Inicio</label>
-            <input class="form-control" type="time" name="hora_inicio" value="{{ $evento->hora_inicio }}"
-                id="hora_inicio">
+            <input class="form-control" type="time"  name="hora_inicio"
+                value="{{ $evento->hora_inicio }}" id="hora_inicio">
         </div>
         <h6>Fin</h6>
         <div>
             <label for="">Fecha fin</label>
-            <input class="form-control" type="date" name="fecha_fin[]" value="{{ $evento->fecha_fin }}"
-                id="fecha_fin">
+            <input class="form-control" type="date" min="{{ $evento->fecha_inicio }}" name="fecha_fin[]"
+                value="{{ $evento->fecha_fin }}" id="fecha_fin">
         </div>
 
         <div>
             <label for="">Hora Fin</label>
-            <input class="form-control" type="time" name="fecha_fin[]" value="{{ $evento->hora_fin }}"
-                id="hora_fin">
+            <input class="form-control" type="time" name="fecha_fin[]"
+                value="{{ $evento->hora_fin }}" id="hora_fin">
         </div>
         <hr>
     </div>
@@ -66,6 +66,7 @@
         <label for="">Notas Servicio Generales</label>
         <textarea name="notas_generales" id="notas_generales" class="form-control">{{ $evento->notas_generales }}</textarea>
     </div>
+    <button type="submit"></button>
     <div class="text-end">
         <span class="btn btn-success mt-1 btn-sm " onclick="actualizarEvento()">
             Guardar

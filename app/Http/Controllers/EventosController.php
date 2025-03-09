@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Eventos;
 use App\Models\Organizador;
+use App\Rules\HorasValida;
+use App\Rules\HoraValida;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -19,15 +21,18 @@ class EventosController extends Controller
     protected $message = [
         'fecha_fin.0.after' => 'La fecha de finalización debe de ser déspues de la de inicio',
         'fecha_fin.0.required' => 'La fecha de finalización es obligatoria',
-        'fecha_fin.1' => 'La hora de fin debe de ser déspues de la hora de inicio',
-        'hora_inicio' => 'La hora de inicio debe de ser antes de la hora de fin',
+        'fecha_fin.1.after' => 'La hora de fin debe de ser déspues de la hora de inicio',
+        'hora_inicio.before' => 'La hora de inicio debe de ser antes de la hora de fin',
         'organizador_id.exists' => 'Debe de escoger un organozador que exista',
         'organizador_id.required' => 'El organizador es obligatorio'
     ];
 
+    protected  $horaMinima = '07:00:00';
+    protected $horaMaxima = '20:00:00';
+
     public function eventosDia(String $dia)
     {
-        $eventos = Eventos::where('fecha_inicio', '=', $dia)->orwhere('fecha_fin', '<=', $dia)->get();
+        $eventos = Eventos::where('fecha_inicio', '<=', $dia)->where('fecha_fin', '>=', $dia)->get();
         if (isset($eventos)) {
             $tablaEventos = view('eventos.index', compact('eventos'));
             return response($tablaEventos, 200)->header('Content-Type', 'text/html');
@@ -40,9 +45,9 @@ class EventosController extends Controller
             "titulo"  => ['required'],
             'descripcion'  => 'required|max:255',
             'area' => ['required', 'exists:App\Models\Area,id'],
-            'fecha_fin.0' => ['required', 'date', Rule::date()->afterOrEqual($fecha)],
-            'fecha_fin.1' => ['required', 'after:hora_inicio'],
-            'hora_inicio' => ['required', 'before:fecha_fin.1'],
+            'fecha_fin.0' => ['required', 'date', Rule::date()->afterOrEqual($request->fecha_inicio)],
+            'hora_inicio' => ['required', 'before:fecha_fin.1', new HorasValida($this->horaMinima, $this->horaMaxima)],
+            'fecha_fin.1' => ['required', 'after:hora_inicio', new HorasValida($this->horaMinima, $this->horaMaxima)],
             'organizador_id' => ['required', 'exists:App\Models\Organizador,id']
         ], $this->message);
 
@@ -123,7 +128,7 @@ class EventosController extends Controller
         }
         $evento->delete();
         toast('Se elimino el evento', 'success');
-        return redirect()->route('home');
+        return redirect()->back();
     }
     public function update(Request $request, $id)
     {
@@ -135,15 +140,14 @@ class EventosController extends Controller
                     'message' => "No existe ese evento",
                 ]);
             }
-
-
             $validator = Validator::make($request->all(), [
                 "titulo"  => ['required'],
                 'descripcion'  => 'required|max:255',
                 'area' => ['required', 'exists:App\Models\Area,id'],
+                'fecha_inicio' => ['required', 'date'],
                 'fecha_fin.0' => ['required', 'date', Rule::date()->afterOrEqual($request->fecha_inicio)],
-                'fecha_fin.1' => ['required', 'after:hora_inicio'],
-                'hora_inicio' => ['required', 'before:fecha_fin.1'],
+                'hora_inicio' => ['required', 'before:fecha_fin.1', new HorasValida($this->horaMinima, $this->horaMaxima)],
+                'fecha_fin.1' => ['required', 'after:hora_inicio', new HorasValida($this->horaMinima, $this->horaMaxima)],
                 'organizador_id' => ['required', 'exists:App\Models\Organizador,id']
             ], $this->message);
 
@@ -179,7 +183,7 @@ class EventosController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => implode("<br/>", $validator->messages()->all()),
-                ]);
+                ], 400);
             }
 
             $evento->nombre = $request->titulo;
@@ -218,7 +222,7 @@ class EventosController extends Controller
         } else {
             $areas = Area::select('id', 'sede')->where('sede', $sede)->get()->pluck('id');
         }
-        
+
         $eventos = Eventos::whereIn('areas_id', $areas)->get();
         $eventos_temp = [];
         foreach ($eventos as $key => $value) {

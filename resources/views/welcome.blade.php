@@ -10,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <title>{{ config('app.name', 'Laravel') }}</title>
 </head>
 
 <body>
@@ -19,7 +20,7 @@
             <label for="filtro">Elige una sede</label>
             <select name="sede" id="filtro" class="form-control">
                 <option selected disabled>Elegir ...</option>
-                <option value="normal" >La Normal</option>
+                <option value="normal">La Normal</option>
                 <option value="belenes">Belenes</option>
                 <option value="aulas">Belenes Aulas</option>
                 <option value="todas">Todas</option>
@@ -28,7 +29,7 @@
     </div>
 
     <div>
-        <div id='calendar' class="p-3" style="max-height: 90vh"></div>
+        <div id='calendar' class="p-3" style="max-height: 85vh"></div>
     </div>
 
     <div class="modal fade" id="modalEvento" tabindex="-1">
@@ -135,7 +136,6 @@
 
             document.getElementById('filtro').onchange = function() {
                 filtro = $('#filtro').val();
-                console.log(filtro);
                 let url = "{{ route('eventos.listado', ':id') }}";
                 url = url.replace(':id', filtro);
                 getEventos(url);
@@ -323,7 +323,7 @@
 
             function actualizarEvento() {
                 let url = "{{ route('evento.update', ':id') }}";
-                url = url.replace(':id', eventoID.id);
+                url = url.replace(':id', eventoID);
                 $.ajax({
                     url: url,
                     method: 'PUT',
