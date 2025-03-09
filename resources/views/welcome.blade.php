@@ -10,76 +10,22 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var data = @json($eventos);
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                eventDisplay: 'list-events',
-                themeSystem: 'bootstrap5',
-                nowIndicator: true,
-                locale: 'es',
-                buttonText: {
-                    today: 'hoy',
-                    month: 'Mes',
-                    week: 'Semana',
-                    day: 'Día',
-                },
-                headerToolbar: {
-
-                    left: 'prev,next,today',
-                    center: 'title',
-                    right: 'dayGridMonth,listWeek,listDay' // user can switch between the two
-                },
-                eventTimeFormat: { // like '14:30:00'
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    meridiem: false
-                },
-                dateClick: function(info) {
-                    //alert('Clicked on: ' + info.dateStr);
-                    $('#modalEvento').modal('show');
-                    eventosDia(info.dateStr);
-                    @if (Auth::check())
-                        document.getElementById('fecha_fin').min = info.dateStr;
-                        areas();
-                        organizadores();
-                    @endif
-                },
-                eventClick: function(info) {
-                    @if (Auth::check())
-                        editarEvento(info.event.extendedProps);
-                    @else
-                        verEvento(info.event.extendedProps, info.event);
-                    @endif
-
-                }
-            });
-            calendar.render();
-
-            data.forEach(element => {
-                var evento = calendar.addEvent({
-                    id: element['id'],
-                    title: element['nombre'],
-                    start: element['fecha_inicio'] + "T" + element['hora_inicio'],
-                    end: element['fecha_fin'] + "T" + element['hora_inicio'],
-                    backgroundColor: element['color'],
-                    extendedProps: {
-                        id: element['id'],
-                        nombre: element['nombre']
-                    }
-                })
-            });
-        });
-    </script>
-
 </head>
 
 <body>
     @include('layouts.navbar')
+    <div class=" justify-content-center d-flex mt-2">
+        <div class=" col-sm-12 col-md-2">
+            <label for="filtro">Elige una sede</label>
+            <select name="sede" id="filtro" class="form-control">
+                <option selected disabled>Elegir ...</option>
+                <option value="normal" >La Normal</option>
+                <option value="belenes">Belenes</option>
+                <option value="aulas">Belenes Aulas</option>
+                <option value="todas">Todas</option>
+            </select>
+        </div>
+    </div>
 
     <div>
         <div id='calendar' class="p-3" style="max-height: 90vh"></div>
@@ -98,9 +44,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
                     @if (Auth::check())
-                        <button class="btn btn-primary" data-bs-target="#exampleModalToggle2"
+                        <button class="btn btn-primary btn-sm" data-bs-target="#exampleModalToggle2"
                             data-bs-toggle="modal">Crear evento</button>
                     @endif
                 </div>
@@ -158,7 +104,6 @@
                                 <label for="">Notas Servicio Generales</label>
                                 <textarea name="notas_generales" id="notas_generales" class="form-control"></textarea>
                             </div>
-                            <button type="submit"></button>
                             <div class="text-end">
                                 <span class="btn btn-success mt-1 btn-sm " onclick="guardarEvento()">
                                     Guardar
@@ -186,6 +131,94 @@
     <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
 
     <script>
+        window.addEventListener("DOMContentLoaded", function(event) {
+
+            document.getElementById('filtro').onchange = function() {
+                filtro = $('#filtro').val();
+                console.log(filtro);
+                let url = "{{ route('eventos.listado', ':id') }}";
+                url = url.replace(':id', filtro);
+                getEventos(url);
+
+            };
+        });
+        async function getEventos(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                const eventos = await response.json();
+                renderCalendar(eventos.data)
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var data = @json($eventos);
+            renderCalendar(data);
+        });
+
+
+        function renderCalendar(data) {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                eventDisplay: 'list-events',
+                themeSystem: 'bootstrap5',
+                nowIndicator: true,
+                locale: 'es',
+                buttonText: {
+                    today: 'hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                },
+                headerToolbar: {
+                    left: 'prev,next,today',
+                    center: 'title',
+                    right: 'dayGridMonth,listWeek,listDay' // user can switch between the two
+                },
+                eventTimeFormat: { // like '14:30:00'
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    meridiem: false
+                },
+                dateClick: function(info) {
+                    //alert('Clicked on: ' + info.dateStr);
+                    $('#modalEvento').modal('show');
+                    eventosDia(info.dateStr);
+                    @if (Auth::check())
+                        document.getElementById('fecha_fin').min = info.dateStr;
+                        areas();
+                        organizadores();
+                    @endif
+                },
+                eventClick: function(info) {
+                    verEvento(info.event.extendedProps, info.event);
+                }
+            });
+            calendar.render();
+
+            data.forEach(element => {
+                var evento = calendar.addEvent({
+                    id: element['id'],
+                    title: element['nombre'],
+                    start: element['fecha_inicio'] + "T" + element['hora_inicio'],
+                    end: element['fecha_fin'] + "T" + element['hora_inicio'],
+                    backgroundColor: element['color'],
+                    extendedProps: {
+                        id: element['id'],
+                        nombre: element['nombre']
+                    }
+                })
+            });
+        }
+    </script>
+
+    <script>
         var Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -201,7 +234,6 @@
             diaSeleccionado = date;
             let url = "{{ route('eventos.dia', ':id') }}";
             url = url.replace(':id', date);
-            console.log(url);
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
@@ -249,7 +281,7 @@
             async function editarEvento(id) {
                 eventoID = id;
                 let url = "{{ route('eventos.edit', ':id') }}";
-                url = url.replace(':id', id.id);
+                url = url.replace(':id', id);
                 try {
                     const response = await fetch(url);
                     if (!response.ok) {
@@ -316,26 +348,26 @@
                 })
             }
         </script>
-    @else
-        <script>
-            async function verEvento(id, date) {
-                let url = "{{ route('eventos.show', ':id') }}";
-                url = url.replace(':id', id.id);
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error(`Response status: ${response.status}`);
-                    }
-                    const evento = await response.text();
-                    document.getElementById('tituloModal').innerHTML = id.nombre;
-                    document.getElementById('contenido').innerHTML = evento;
-                    $('#modalEvento').modal('show');
-                } catch (error) {
-                    console.error(error.message);
-                }
-            }
-        </script>
     @endif
+    <script>
+        async function verEvento(id, date) {
+            let url = "{{ route('eventos.show', ':id') }}";
+            url = url.replace(':id', id.id);
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                const evento = await response.text();
+                document.getElementById('tituloModal').innerHTML = id.nombre;
+                document.getElementById('contenido').innerHTML = evento;
+                $('#modalEvento').modal('show');
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+    </script>
+
 </body>
 
 </html>

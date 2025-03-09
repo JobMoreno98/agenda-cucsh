@@ -39,7 +39,8 @@
         <label for="">Áreas</label>
         <select class="form-control" name="area" id="">
             @forelse ($areas as $item)
-                <option value="{{ $item->id }}" {{ $evento->areas_id == $item->id ? 'selected' : '' }}> {{ $item->nombre }}</option>
+                <option value="{{ $item->id }}" {{ $evento->areas_id == $item->id ? 'selected' : '' }}>
+                    {{ $item->nombre }}</option>
             @empty
                 <option selected disabled>No hay áreas</option>
             @endforelse
@@ -49,7 +50,8 @@
         <label for="">Organizador</label>
         <select name="organizador_id" class="form-control" id="organizador_id">
             @forelse ($organizadores as $item)
-            <option value="{{ $item->id }}" {{ $evento->organizador_id == $item->id ? 'selected' : '' }}> {{ $item->nombre }}</option>
+                <option value="{{ $item->id }}" {{ $evento->organizador_id == $item->id ? 'selected' : '' }}>
+                    {{ $item->nombre }}</option>
             @empty
                 <option selected disabled>No hay organizadores registrados</option>
             @endforelse
@@ -64,7 +66,6 @@
         <label for="">Notas Servicio Generales</label>
         <textarea name="notas_generales" id="notas_generales" class="form-control">{{ $evento->notas_generales }}</textarea>
     </div>
-    <input type="submit" value="enviar">
     <div class="text-end">
         <span class="btn btn-success mt-1 btn-sm " onclick="actualizarEvento()">
             Guardar

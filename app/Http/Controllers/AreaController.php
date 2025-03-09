@@ -9,7 +9,7 @@ class AreaController extends Controller
 {
     public function listado()
     {
-        $areas = Area::all();
+        $areas = Area::orderBy('nombre')->get();
         if (isset($areas)) {
             $selectAreas = view('areas.select', compact('areas'))->render();
             return response($selectAreas, 200)->header('Content-Type', 'text/html');
@@ -37,7 +37,7 @@ class AreaController extends Controller
     public function update(Request $request, $id)
     {
         $area = Area::find($id);
-        if (isset($area)) {
+        if (!isset($area)) {
             return response()->json([
                 'error' => 'Not Found',
                 'message' => 'No se encontro el área que ingresaste'

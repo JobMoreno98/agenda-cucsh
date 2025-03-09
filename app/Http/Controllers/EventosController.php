@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Eventos;
 use App\Models\Organizador;
+use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -171,7 +172,7 @@ class EventosController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Hay ' . $eventos . ' eventos que impiden el registro',
-                ],400);
+                ], 400);
             }
 
             if ($validator->fails()) {
@@ -209,5 +210,40 @@ class EventosController extends Controller
     {
         $eventos = Eventos::all();
         return view('eventos.admin', compact('eventos'));
+    }
+    public function listado($sede)
+    {
+        if (strcmp('todas', $sede) == 0) {
+            $areas = Area::select('id', 'sede')->get()->pluck('id');
+        } else {
+            $areas = Area::select('id', 'sede')->where('sede', $sede)->get()->pluck('id');
+        }
+        
+        $eventos = Eventos::whereIn('areas_id', $areas)->get();
+        $eventos_temp = [];
+        foreach ($eventos as $key => $value) {
+            $diferencia = (int)date_diff(date_create($value->fecha_fin), date_create($value->fecha_inicio))->format("%a");
+            $evento = [];
+            $date = new DateTime($value->fecha_inicio);
+            for ($i = 0; $i <= $diferencia; $i++) {
+                $fecha = $date->format('Y-m-d');
+                $evento_tmp = [
+                    'id' => $value->id,
+                    'nombre' => $value->nombre,
+                    'fecha_inicio' => $fecha,
+                    'hora_inicio' => date('H:i', strtotime($value->hora_inicio)),
+                    'fecha_fin' => $fecha,
+                    'hora_fin' => date('H:i', strtotime($value->hora_fin)),
+                    'color' => $value->area->color
+                ];
+                array_push($evento, $evento_tmp);
+                $date->modify('+1 day');
+            }
+            array_push($eventos_temp, $evento);
+        }
+        $eventos = collect($eventos_temp)->collapse();
+        return response()->json([
+            'data' => $eventos
+        ]);
     }
 }

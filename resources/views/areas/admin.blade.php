@@ -4,7 +4,8 @@
     <h2>Áreas</h2>
     <div id="contenido">
         <div>
-            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#crearArea">
+            <button type="button" onclick="crearArea()" class="btn btn-sm btn-success" data-bs-toggle="modal"
+                data-bs-target="#crearArea">
                 Crear Área
             </button>
 
@@ -15,8 +16,10 @@
                     Nombre: {{ $item->nombre }} <br>
                 </div>
                 <div>
-                    <a href=""class="btn btn-sm btn-success">Editar</a><a
-                        href=""class="btn btn-sm btn-danger">Borrar</a>
+                    <button class="btn btn-sm btn-success mx-1" onclick="editArea('{{ json_encode($item) }}')"> <span
+                            class="material-symbols-outlined">
+                            edit
+                        </span></button>
                 </div>
             </div>
         @empty
@@ -32,24 +35,29 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('areas.store') }}" method="post">
+                    <form action="{{ route('areas.store') }}" method="post" id="formulario">
                         @csrf
                         <div>
                             <label for="">Nombre</label>
-                            <input class="form-control" type="text" name="nombre">
+                            <input class="form-control" type="text" name="nombre" id="nombre">
                         </div>
                         <div>
                             <label for="">Sede</label>
-                            <input class="form-control" type="text" name="sede">
+                            <select class="form-control" name="sede" id="sede">
+                                <option>Elegir ...</option>
+                                <option value="normal">La Normal</option>
+                                <option value="belenes">Belenes</option>
+                                <option value="aulas">Belenes Aulas</option>
+                            </select>
                         </div>
                         <div>
                             <label for="">Edificio</label>
-                            <input class="form-control" type="text" name="edificio">
+                            <input class="form-control" type="text" name="edificio" id="edificio">
                         </div>
                         <div>
-                            <label for="exampleColorInput" class="form-label">Color</label>
-                            <input type="color" class="form-control form-control-color" id="exampleColorInput"
-                                name="color" value="#563d7c" title="Choose your color">
+                            <label for="color" class="form-label">Color</label>
+                            <input type="color" class="form-control form-control-color" id="color" name="color"
+                                value="#563d7c" title="Choose your color">
                         </div>
                         <div><button type="submit">Enviar</button></div>
                     </form>
@@ -57,4 +65,37 @@
             </div>
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        function crearArea() {
+            if (document.getElementById('actualizar')) {
+                let actualizar = document.getElementById('actualizar');
+                actualizar.parentNode.removeChild(actualizar);
+            }
+            document.getElementById("formulario").reset();
+            let url = "{{ route('areas.store') }}";
+            document.getElementById('formulario').action = url;
+        }
+
+        function editArea(item) {
+            item = JSON.parse(item);
+            document.getElementById('crearArea').innerHtml = "Editar Organizador";
+            let url = "{{ route('areas.update', ':id') }}";
+            url = url.replace(':id', item['id']);
+            let formulario = document.getElementById('formulario');
+            formulario.action = url;
+            var x = document.createElement("input");
+            x.setAttribute("type", "hidden");
+            x.setAttribute("value", "PUT");
+            x.setAttribute('name', '_method');
+            x.setAttribute('id', 'actualizar');
+            $('#nombre').val(item['nombre']);
+            $('#sede').val(item['sede']);
+            $('#edificio').val(item['edificio']);
+            $('#color').val(item['color']);
+            formulario.appendChild(x);
+            $("#crearArea").modal("show");
+        }
+    </script>
 @endsection

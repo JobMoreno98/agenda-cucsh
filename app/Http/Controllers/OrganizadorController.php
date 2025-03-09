@@ -11,7 +11,7 @@ class OrganizadorController extends Controller
     public function index()
     {
         $organizadores = Organizador::all();
-        $areas = Area::all();
+        $areas = Area::orderBy('nombre')->get();
         return view('organizadores.index', compact('organizadores', 'areas'));
     }
     public function store(Request $request)
@@ -40,7 +40,7 @@ class OrganizadorController extends Controller
         return redirect()->route('organizadores.index');
     }
     public function listado(){
-        $organizadores = Organizador::all();
+        $organizadores = Organizador::orderBy('nombre')->get();
         if (isset($organizadores)) {
             $selectOrganizadores = view('organizadores.select', compact('organizadores'))->render();
             return response($selectOrganizadores, 200)->header('Content-Type', 'text/html');

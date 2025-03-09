@@ -19,7 +19,7 @@ Route::middleware([
 });
 
 Route::middleware('auth')->group(function () {
-    Route::resource('areas', AreaController::class)->names('areas')->except(['index']);
+    Route::resource('areas', AreaController::class)->names('areas')->except(['index', 'create']);
     Route::resource('organizadores', OrganizadorController::class)->names('organizadores');
     Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
     Route::get('/listado-areas', [AreaController::class, 'listado'])->name('areas.listado');
@@ -29,7 +29,6 @@ Route::middleware('auth')->group(function () {
 });
 Route::get('/evento/{id}', [EventosController::class, 'show'])->name('eventos.show');
 Route::post('/crear-evento/{fecha}', [EventosController::class, 'store'])->name('eventos.store')->middleware('auth');
-Route::resource('areas', AreaController::class)->except(['create']);
-
+Route::get('/listado-eventos/{sede}', [EventosController::class, 'listado'])->name('eventos.listado');
 Route::get('eventos-dia/{dia}', [EventosController::class, 'eventosDia'])->name('eventos.dia');
 Route::put('/actualizar-evento/{id}', [EventosController::class, 'update'])->name('evento.update')->middleware('auth');

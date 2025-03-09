@@ -16,7 +16,7 @@
             <p class="d-flex m-0 align-items-center">
                 <span class="material-symbols-outlined">
                     location_on
-                </span> <span>Lugar</span>: {{ $evento->area->nombre }}
+                </span> <span>Lugar</span>:  {{$evento->area->sedeReal}} - {{$evento->area->edificio }} - {{ $evento->area->nombre }} 
 
             </p>
             <p class="d-flex m-0 align-items-center">
@@ -43,4 +43,9 @@
             <span>Termina</span>: {{ $evento->fecha_fin . ' ' . $evento->hora_fin }}
         </p>
     </div>
+    @if (Auth::check())
+        <div class="text-end">
+            <button class="btn btn-sm btn-success" onclick="editarEvento('{{ $evento->id }}')">Editar evento</button>
+        </div>
+    @endif
 </div>

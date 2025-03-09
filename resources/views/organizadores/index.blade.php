@@ -97,9 +97,7 @@
             $('#area_id').val(item['areas_id']);
             $('#contacto').val(item['contacto']);
             formulario.appendChild(x);
-
             $("#crearOrganizador").modal("show");
-
         }
     </script>
 @endsection
