@@ -41,13 +41,15 @@ class EventosController extends Controller
     public function store(Request $request, $fecha)
     {
 
+       // return $request->all();
+
         $validator = Validator::make($request->all(), [
             "titulo"  => ['required'],
             'descripcion'  => 'required|max:255',
-            'area' => ['required', 'exists:App\Models\Area,id'],
-            'fecha_fin.0' => ['required', 'date', Rule::date()->afterOrEqual($request->fecha_inicio)],
-            'hora_inicio' => ['required', 'before:fecha_fin.1', new HorasValida($this->horaMinima, $this->horaMaxima)],
-            'fecha_fin.1' => ['required', 'after:hora_inicio', new HorasValida($this->horaMinima, $this->horaMaxima)],
+            'area_id' => ['required', 'exists:App\Models\Area,id'],
+            'fecha_fin.0' => ['required', 'date', Rule::date()->afterOrEqual($fecha)],
+            'hora_inicio' => ['required', 'before:fecha_fin.1', new HorasValida($this->horaMinima, $this->horaMaxima,'store')],
+            'fecha_fin.1' => ['required', 'after:hora_inicio', new HorasValida($this->horaMinima, $this->horaMaxima,'store')],
             'organizador_id' => ['required', 'exists:App\Models\Organizador,id']
         ], $this->message);
 
@@ -57,21 +59,38 @@ class EventosController extends Controller
                 'message' => implode("<br/>", $validator->messages()->all()),
             ]);
         }
-        $eventos =  Eventos::where('areas_id', $request->area)->where('fecha_inicio', '=', $fecha)->orwhere('fecha_fin', '=', $fecha)
-            ->orwhereBetween('hora_inicio', [$request->hora_inicio, $request->fecha_fin[1]])
-            ->orwhereBetween('hora_fin', [$request->hora_inicio, $request->fecha_fin[1]])->count();
+        $whereParams = [
+            'fecha_inicio' => $fecha,
+            'fecha_fin' => $request->fecha_fin[0],
+            'hora_inicio' => $request->hora_inicio,
+            'hora_fin' => $request->fecha_fin[1]
+        ];
 
+        $eventos =  Eventos::where([['areas_id', $request->area]])
+            ->where(function (Builder $query) use ($whereParams) {
+                $query->where(function ($query) use ($whereParams) {
+                    // Caso donde el evento nuevo empieza antes de que el evento actual termine y termina después de que el evento actual empiece
+                    $query->where('fecha_inicio', '<=', $whereParams['fecha_fin'])
+                        ->where('fecha_fin', '>=', $whereParams['fecha_inicio']);
+                })->Where(function ($query) use ($whereParams) {
+                    // Verifica que la hora de inicio y fin del evento no se solapen
+                    $query->where('hora_inicio', '<=', $whereParams['hora_fin'])
+                        ->where('hora_fin', '>=', $whereParams['hora_inicio']);
+                });
+                //->orWhereBetween('hora_inicio', [$whereParams['hora_inicio'], $whereParams['hora_fin']])
+                //->orWhereBetween('hora_fin', [$whereParams['hora_inicio'], $whereParams['hora_fin']]);
+            })->count();
         if ($eventos > 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ya hay eventos registrados en ese espacio',
-            ]);
+                'message' => 'Hay ' . $eventos . ' eventos que impiden el registro',
+            ], 400);
         }
 
         $evento = new Eventos();
         $evento->nombre = $request->titulo;
         $evento->descripcion = $request->descripcion;
-        $evento->areas_id  = $request->area;
+        $evento->areas_id  = $request->area_id;
         $evento->user_id  = Auth::user()->id;
         $evento->fecha_inicio = $fecha;
         $evento->hora_inicio = date('H:i:s', strtotime($request->hora_inicio));
@@ -146,8 +165,8 @@ class EventosController extends Controller
                 'area' => ['required', 'exists:App\Models\Area,id'],
                 'fecha_inicio' => ['required', 'date'],
                 'fecha_fin.0' => ['required', 'date', Rule::date()->afterOrEqual($request->fecha_inicio)],
-                'hora_inicio' => ['required', 'before:fecha_fin.1', new HorasValida($this->horaMinima, $this->horaMaxima)],
-                'fecha_fin.1' => ['required', 'after:hora_inicio', new HorasValida($this->horaMinima, $this->horaMaxima)],
+                'hora_inicio' => ['required', 'before:fecha_fin.1', new HorasValida($this->horaMinima, $this->horaMaxima,'update')],
+                'fecha_fin.1' => ['required', 'after:hora_inicio', new HorasValida($this->horaMinima, $this->horaMaxima,'update')],
                 'organizador_id' => ['required', 'exists:App\Models\Organizador,id']
             ], $this->message);
 

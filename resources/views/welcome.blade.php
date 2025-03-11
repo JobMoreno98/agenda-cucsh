@@ -104,6 +104,7 @@
                                 <label for="">Notas Servicio Generales</label>
                                 <textarea name="notas_generales" id="notas_generales" class="form-control"></textarea>
                             </div>
+                            <button type="submit">Enviar</button>
                             <div class="text-end">
                                 <span class="btn btn-success mt-1 btn-sm " onclick="guardarEvento()">
                                     Guardar
