@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AreaController extends Controller
 {
@@ -24,6 +25,20 @@ class AreaController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'nombre' => ['required', 'string'],
+            'sede' => ['required'],
+            'edificio' => ['required'],
+            'color' => ['required']
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('areas.index')->with([
+                'error' => true,
+                'message' => implode("<br/>", $validator->messages()->all()),
+            ]);
+        }
+
         Area::create([
             'sede' => $request->sede,
             'nombre' => $request->nombre,
@@ -46,6 +61,19 @@ class AreaController extends Controller
             ], 403);
         }
 
+        $validator = Validator::make($request->all(), [
+            'nombre' => ['required', 'string', 'exists:areas,id'],
+            'sede' => ['required'],
+            'edificio' => ['required'],
+            'color' => ['required']
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('areas.index')->with([
+                'error' => true,
+                'message' => implode("<br/>", $validator->messages()->all()),
+            ]);
+        }
         $area->update([
             'nombre' => $request->nombre,
             'sede' => $request->sede,

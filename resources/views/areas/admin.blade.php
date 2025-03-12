@@ -67,14 +67,6 @@
     </div>
 @endsection
 @section('js')
-    @if (session('success'))
-        <script>
-            Toast.fire({
-                title: "{{ session('message') }}",
-                icon: "success"
-            });
-        </script>
-    @endif
     <script>
         function crearArea() {
             if (document.getElementById('actualizar')) {

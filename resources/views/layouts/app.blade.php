@@ -52,6 +52,22 @@
             showCloseButton: true
         });
     </script>
+    @if (session('success'))
+        <script>
+            Toast.fire({
+                title: "{!! session('message') !!}",
+                icon: "success"
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Toast.fire({
+                title: "{!! session('message') !!}",
+                icon: "error"
+            });
+        </script>
+    @endif
     @yield('js')
 </body>
 

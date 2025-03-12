@@ -124,36 +124,6 @@
 @endsection
 @section('js')
     <script>
-        /*
-            function crearOrganizador() {
-                if (document.getElementsByTagName('actualizar')) {
-                    let actualizar = document.getElementsByTagName('actualizar');
-                    actualizar.parentNode.removeChild(actualizar);
-                }
-                document.getElementById("formualrio").reset();
-                let url = "{{ route('organizadores.store') }}";
-                document.getElementById('formualrio').action = url;
-            }
-
-            function editOrganizador(item) {
-                item = JSON.parse(item);
-                document.getElementById('crearOrganizador').innerHtml = "editar Organizador";
-                let url = "{{ route('organizadores.update', ':id') }}";
-                url = url.replace(':id', item['id']);
-                let formulario = document.getElementById('formualrio');
-                formulario.action = url;
-                var x = document.createElement("input");
-                x.setAttribute("type", "hidden");
-                x.setAttribute("value", "PUT");
-                x.setAttribute('name', '_method');
-                x.setAttribute('id', 'actualizar');
-                $('#nombre').val(item['nombre']);
-                $('#area_id').val(item['areas_id']);
-                $('#contacto').val(item['contacto']);
-                formulario.appendChild(x);
-                $("#crearOrganizador").modal("show");
-            }
-    */
         async function editarEvento(id) {
             eventoID = id;
             let url = "{{ route('eventos.edit', ':id') }}";
