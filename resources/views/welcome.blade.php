@@ -311,7 +311,7 @@
                             window.location.reload();
                         }, 2000);
                     } else {
-                        console.log(data)
+
                         Toast.fire({
                             title: data.message,
                             icon: "error"

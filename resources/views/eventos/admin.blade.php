@@ -203,7 +203,6 @@
 
         function guardarEvento() {
             let diaSeleccionado = $('#fecha_inicio').val();
-            console.log(diaSeleccionado);
             let url = "{{ route('eventos.store', ':id') }}";
             url = url.replace(':id', diaSeleccionado);
             $.ajax({
@@ -227,7 +226,6 @@
                         window.location.reload();
                     }, 2000);
                 } else {
-                    console.log(data)
                     Toast.fire({
                         title: data.message,
                         icon: "error"
