@@ -4,6 +4,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\EventosController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrganizadorController;
+use App\Http\Controllers\UsuariosController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -21,10 +22,11 @@ Route::middleware([
 Route::middleware('auth')->group(function () {
     Route::resource('areas', AreaController::class)->names('areas')->except(['index', 'create']);
     Route::resource('organizadores', OrganizadorController::class)->names('organizadores');
+    Route::resource('usuarios', UsuariosController::class)->names('usuarios');
     Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
     Route::get('/listado-areas', [AreaController::class, 'listado'])->name('areas.listado');
     Route::resource('eventos', EventosController::class)->except(['create', 'store', 'destroy', 'show']);
-    Route::delete('/elimiar-evento/{id}', [EventosController::class, 'destroy'])->name('eventos.delete')->middleware('auth');
+    Route::delete('/elimiar-evento/{id}', [EventosController::class, 'destroy'])->name('eventos.delete');
     Route::get('/lista-organziadores', [OrganizadorController::class, 'listado'])->name('organizadores.listado');
 });
 Route::get('/evento/{id}', [EventosController::class, 'show'])->name('eventos.show');
