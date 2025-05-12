@@ -24,7 +24,7 @@
                     </div>
                     <div>
                         <b>Nombre:</b> {{ $item->nombre }} <br>
-                        <b>Fecha de Fin:</b> {{ $item->fecha_fin . ' ' . $item->hora_fin }}
+                        <b>Fecha de Fin:</b> <span class="text-capitalize">{{ strftime('%A %e %B %Y', strtotime($item->fecha_fin)) . ' / Hora: ' . $item->hora_fin }}</span>
                     </div>
                 </div>
 

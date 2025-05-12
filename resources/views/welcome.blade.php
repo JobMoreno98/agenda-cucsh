@@ -209,6 +209,7 @@
                     start: element['fecha_inicio'] + "T" + element['hora_inicio'],
                     end: element['fecha_fin'] + "T" + element['hora_inicio'],
                     backgroundColor: element['color'],
+                    borderColor : element['color'],
                     extendedProps: {
                         id: element['id'],
                         nombre: element['nombre']
