@@ -231,7 +231,7 @@ class EventosController extends Controller
 
     public function index()
     {
-        $eventos = Eventos::all();
+        $eventos = Eventos::orderBy('fecha_inicio')->paginate(10);
         return view('eventos.admin', compact('eventos'));
     }
     public function listado($sede)

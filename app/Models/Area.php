@@ -17,4 +17,12 @@ class Area extends Model
             set: fn() =>  $arreglo[$this->sede],
         );
     }
+    protected function tipoEspacio(): Attribute
+    {
+        $arreglo = ['0' => 'Eventos', '1' => 'Administrativa', '2' => 'Aula'];
+        return Attribute::make(
+            get: fn() => $arreglo[$this->tipo],
+            set: fn() =>  $arreglo[$this->tipo],
+        );
+    }
 }

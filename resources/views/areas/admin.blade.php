@@ -12,9 +12,19 @@
         </div>
         @forelse ($areas as $item)
             <div class="border d-flex justify-content-between align-items-center border-dark mt-2 p-2 rounded">
-                <div>
-                    Nombre: {{ $item->nombre }} <br>
+                <div class="d-flex align-items-center">
+                    <div class="text-uppercase text-white me-2 rounded p-1 text-break d-flex align-items-center"
+                        style="background:{{ $item->color }};width:100px;height:100px;border:{{ $item->color }} 2px solid;">
+                        <span class="d-block m-auto text-center " style="font-size: 16pt">
+                            Edificio <br> {{ $item->edificio }}
+                        </span>
+                    </div>
+                    <div>
+                        <b>Nombre:</b> {{ $item->nombre }} <br>
+                        <b>Sede:</b> {{ ucfirst($item->sede) }} / <b>Tipo:</b> {{ $item->tipoEspacio }}
+                    </div>
                 </div>
+
                 <div>
                     <button class="btn btn-sm btn-success mx-1" onclick="editArea('{{ json_encode($item) }}')"> <span
                             class="material-symbols-outlined">
@@ -25,6 +35,9 @@
         @empty
             <h4>Aun no hay áreas registradas</h4>
         @endforelse
+        <div class="my-2">
+            {{ $areas->links() }}
+        </div>
     </div>
 
     <div class="modal fade" id="crearArea" tabindex="-1" aria-labelledby="crearArea" aria-hidden="true">
@@ -53,6 +66,15 @@
                         <div>
                             <label for="">Edificio</label>
                             <input class="form-control" type="text" name="edificio" id="edificio">
+                        </div>
+                        <div>
+                            <label for="tipo">Tipo</label>
+                            <select class="form-control" name="tipo" id="tipo">
+                                <option>Elegir ...</option>
+                                <option value="0">Eventos</option>
+                                <option value="1">Administrativo</option>
+                                <option value="2">Aula</option>
+                            </select>
                         </div>
                         <div>
                             <label for="color" class="form-label">Color</label>
@@ -94,6 +116,7 @@
             $('#sede').val(item['sede']);
             $('#edificio').val(item['edificio']);
             $('#color').val(item['color']);
+            $('#tipo').val(item['tipo']);
             formulario.appendChild(x);
             $("#crearArea").modal("show");
         }

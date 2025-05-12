@@ -1,3 +1,7 @@
+@php
+    date_default_timezone_set('America/Mexico_City');
+    setlocale(LC_TIME, 'es_MX.UTF-8', 'esp');
+@endphp
 @extends('layouts.app')
 
 @section('content')
@@ -7,12 +11,23 @@
     </button>
     <div id="contenido">
         @forelse ($eventos as $item)
+            @php
+                $fecha = strftime('%a %e %b', strtotime($item->fecha_inicio));
+            @endphp
             <div class="border d-flex justify-content-between align-items-center border-dark mt-2 p-2 rounded">
-                <div>
-                    Nombre: {{ $item->nombre }} <br>
-                    Fecha de Inicio {{ $item->fecha_inicio . ' ' . $item->hora_inicio }} / Fecha de Fin
-                    {{ $item->fecha_fin . ' ' . $item->hora_fin }}
+                <div class="d-flex align-items-center">
+                    <div class="text-uppercase text-white me-2 rounded p-1 text-break d-flex align-items-center"
+                        style="background:{{ $item->area->color }};width:100px;height:100px;border:{{ $item->area->color }} 2px solid;">
+                        <span class="d-block m-auto text-center " style="font-size: 16pt">
+                            {{ $fecha }}
+                        </span>
+                    </div>
+                    <div>
+                        <b>Nombre:</b> {{ $item->nombre }} <br>
+                        <b>Fecha de Fin:</b> {{ $item->fecha_fin . ' ' . $item->hora_fin }}
+                    </div>
                 </div>
+
                 <div class="d-flex">
                     <button class="btn btn-sm btn-success mx-1" onclick="editarEvento('{{ $item->id }}')"><span
                             class="material-symbols-outlined">
@@ -29,6 +44,9 @@
                         </button>
                     </form>
                 </div>
+            </div>
+            <div>
+                {{ $eventos->links() }}
             </div>
         @empty
             <h4>Aun no hay eventos</h4>

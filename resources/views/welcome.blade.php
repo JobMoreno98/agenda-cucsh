@@ -279,7 +279,7 @@
             }
             async function editarEvento(id) {
                 eventoID = id;
-                let url = "{{ route('eventos.edit', ':id') }}";
+                let url = "{{ route('eventos.edit',':id') }}";
                 url = url.replace(':id', id);
                 try {
                     const response = await fetch(url);

@@ -13,7 +13,7 @@
         <div class="border d-flex justify-content-between align-items-center border-dark mt-2 p-2 rounded">
             <div>
                 Nombre: {{ $item->nombre }} <br>
-                Área: {{ $item->area->nombre }} <br>
+                Área: {{ $item->area->edificio ." - ". $item->area->nombre }} <br>
                 Contacto: {{ $item->contacto }}
             </div>
             <div>
@@ -35,7 +35,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="crearOrganizador"></h1>
+                    <h1 class="modal-title fs-5" id="crearOrganizadorTitle"></h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -50,7 +50,7 @@
                             <select class="form-control" name="area_id" id="area_id">
                                 <option disabled selected>Elegir ...</option>
                                 @forelse ($areas as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                    <option value="{{ $item->id }}"> {{ $item->edificio . " - ". $item->nombre }}  </option>
                                 @empty
                                     <option disabled>No hay áreas registradas</option>
                                 @endforelse
@@ -72,7 +72,7 @@
 @section('js')
     <script>
         function crearOrganizador() {
-            if (document.getElementsByTagName('actualizar')) {
+            if (document.getElementsByTagName('actualizar') > 0) {
                 let actualizar = document.getElementsByTagName('actualizar');
                 actualizar.parentNode.removeChild(actualizar);
             }
@@ -83,7 +83,7 @@
 
         function editOrganizador(item) {
             item = JSON.parse(item);
-            document.getElementById('crearOrganizador').innerHtml = "editar Organizador";
+            document.getElementById('crearOrganizadorTitle').innerHtml = "Editar Organizador";
             let url = "{{ route('organizadores.update', ':id') }}";
             url = url.replace(':id', item['id']);
             let formulario = document.getElementById('formualrio');

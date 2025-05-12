@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Tipo;
 use App\Models\Area;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class AreaController extends Controller
 {
     public function listado()
     {
-        $areas = Area::orderBy('nombre')->get();
+        $areas = Area::orderBy('nombre')->where('tipo','!=','1')->get();
         if (isset($areas)) {
             $selectAreas = view('areas.select', compact('areas'))->render();
             return response($selectAreas, 200)->header('Content-Type', 'text/html');
@@ -18,7 +21,7 @@ class AreaController extends Controller
     }
     public function index()
     {
-        $areas = Area::all();
+        $areas = Area::paginate(10);
         return view('areas.admin', compact('areas'));
     }
 
@@ -29,7 +32,8 @@ class AreaController extends Controller
             'nombre' => ['required', 'string'],
             'sede' => ['required'],
             'edificio' => ['required'],
-            'color' => ['required']
+            'color' => ['required'],
+            'tipo' => ['required', new Enum(Tipo::class)]
         ]);
 
         if ($validator->fails()) {
@@ -43,7 +47,8 @@ class AreaController extends Controller
             'sede' => $request->sede,
             'nombre' => $request->nombre,
             'edificio' => $request->edificio,
-            'color' => $request->color
+            'color' => $request->color,
+            'tipo' => $request->tipo
         ]);
         return redirect()->route('areas.index')->with([
             'success' => true,
@@ -62,10 +67,11 @@ class AreaController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'nombre' => ['required', 'string', 'exists:areas,id'],
+            'nombre' => ['required', 'string',  Rule::unique('areas')->ignore($area->id)],
             'sede' => ['required'],
             'edificio' => ['required'],
-            'color' => ['required']
+            'color' => ['required'],
+            'tipo' => ['required', new Enum(Tipo::class)]
         ]);
 
         if ($validator->fails()) {
@@ -78,7 +84,8 @@ class AreaController extends Controller
             'nombre' => $request->nombre,
             'sede' => $request->sede,
             'edificio' => $request->edificio,
-            'color' => $request->color
+            'color' => $request->color,
+            'tipo' => $request->tipo
         ]);
         return redirect()->route('areas.index')->with([
             'success' => true,
