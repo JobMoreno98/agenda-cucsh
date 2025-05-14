@@ -20,7 +20,7 @@
                 {{ $evento->area->nombre }}
 
             </p>
-            <p class="d-flex m-0 align-items-center">
+            <p class="d-flex m-0  flex-column flex-row-md  align-items-center">
                 <span class="material-symbols-outlined">
                     schedule
                 </span>

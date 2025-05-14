@@ -8,42 +8,46 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 @auth
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('eventos.index') }}">Eventos</a>
-                </li>
-                @can('crearAreas')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('areas.index') }}">Áreas</a>
-                </li>
-                @endcan
-                @can('crearOrganizador')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('organizadores.index') }}">Organizadores</a>
-                </li>
-                @endcan
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('usuarios.index') }}">Usuarios</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active border-bottom-lila' : '' }}" aria-current="page" href="{{ route('dashboard') }}" >Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('eventos.index') ? 'active border-bottom-lila' : '' }}" aria-current="page" href="{{ route('eventos.index') }}">Eventos</a>
+                    </li>
+
+                    @can('crearAreas')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('areas.index') ? 'active border-bottom-lila' : '' }}" href="{{ route('areas.index') }}">Áreas</a>
+                        </li>
+                    @endcan
+                    @can('crearOrganizador')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('organizadores.index') ? 'active border-bottom-lila' : '' }}" href="{{ route('organizadores.index') }}">Organizadores</a>
+                        </li>
+                    @endcan
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('usuarios.index') ? 'active border-bottom-lila' : '' }}" href="{{ route('usuarios.index') }}">Usuarios</a>
+                    </li>
 
                 @endauth
             </ul>
             <ul class="navbar-nav">
                 @auth
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('logout') }}"
-                        onclick="event.preventDefault();
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}"
+                            onclick="event.preventDefault();
                                      document.getElementById('logout-form').submit();">
-                        Cerrar sesión
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                </li>
+                            Cerrar sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
                 @endauth
                 @guest
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">Iniciar sesión</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">Iniciar sesión</a>
+                    </li>
                 @endguest
             </ul>
         </div>

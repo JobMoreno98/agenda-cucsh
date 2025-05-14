@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang='es'>
+
 <head>
     <meta charset='utf-8' />
     <script src="{{ asset('js/fullcalendar.js') }}"></script>
@@ -28,7 +29,7 @@
     </div>
 
     <div>
-        <div id='calendar' class="p-3" style="max-height: 85vh"></div>
+        <div id='calendar' class="p-3" style="height: calc(100vh - 60px);"></div>
     </div>
 
     <div class="modal fade" id="modalEvento" tabindex="-1">
@@ -164,7 +165,6 @@
         function renderCalendar(data) {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
                 selectable: true,
                 eventDisplay: 'list-events',
                 themeSystem: 'bootstrap5',
@@ -198,8 +198,23 @@
                 },
                 eventClick: function(info) {
                     verEvento(info.event.extendedProps, info.event);
+                },
+
+                initialView: screen.width < 980 ? 'listWeek' : 'dayGridMonth',
+                aspectRatio: screen.width < 980 ? 1.5 : 2,
+                windowResize: function(view) {
+                    var newView = screen.width < 980 ? 'listWeek' : 'dayGridMonth';
+                    calendar.changeView(newView);
+                    calendar.setOption('aspectRatio', newAspectRatio);
                 }
+
             });
+            window.addEventListener('resize', function() {
+                console.log("Nuevo ancho:", screen.width, screen.width < 980 ? 'listWeek' :
+                    'dayGridMonth');
+                    console.log(screen.width);
+            });
+
             calendar.render();
 
             data.forEach(element => {
@@ -209,7 +224,7 @@
                     start: element['fecha_inicio'] + "T" + element['hora_inicio'],
                     end: element['fecha_fin'] + "T" + element['hora_inicio'],
                     backgroundColor: element['color'],
-                    borderColor : element['color'],
+                    borderColor: element['color'],
                     extendedProps: {
                         id: element['id'],
                         nombre: element['nombre']
@@ -280,7 +295,7 @@
             }
             async function editarEvento(id) {
                 eventoID = id;
-                let url = "{{ route('eventos.edit',':id') }}";
+                let url = "{{ route('eventos.edit', ':id') }}";
                 url = url.replace(':id', id);
                 try {
                     const response = await fetch(url);
